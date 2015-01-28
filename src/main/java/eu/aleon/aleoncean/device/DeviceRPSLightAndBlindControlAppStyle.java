@@ -90,7 +90,7 @@ public abstract class DeviceRPSLightAndBlindControlAppStyle extends DeviceRPS {
     }
 
     protected boolean isDimUp(final RockerSwitchButton button) {
-        return button == getDimUpA() || button == getDimUpA();
+        return button == getDimUpA() || button == getDimUpB();
     }
 
     private boolean buttonChanged(final boolean onlyIfLastIsKnown,
