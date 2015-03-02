@@ -23,6 +23,13 @@
 * MOTION (r)
 * OCCUPANCY_BUTTON (r)
 
+## A5-12-01
+
+### Parameter
+
+* ENERGY_WS (r)
+* POWER_W (r)
+
 ## A5-20-01
 
 ### Parameter
