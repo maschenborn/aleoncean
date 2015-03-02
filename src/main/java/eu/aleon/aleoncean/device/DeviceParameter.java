@@ -50,13 +50,13 @@ public enum DeviceParameter {
 
     BUTTON_DIM_A("BUTTON_DIM_A", RockerSwitchAction.class),
     BUTTON_DIM_B("BUTTON_DIM_B", RockerSwitchAction.class),
-    ENERGY_WS("ENERGY_WS", Long.class),
+    ENERGY_WS("ENERGY_WS", Double.class),
     HUMIDITY_PERCENT("HUMIDITY_PERCENT", Double.class),
     ILLUMINATION_LUX("ILLUMINATION_LUX", Double.class),
     MOTION("MOTION", Boolean.class),
     OCCUPANCY_BUTTON("OCCUPANCY_BUTTON", Boolean.class),
     POSITION_PERCENT(Integer.class),
-    POWER_W(Long.class),
+    POWER_W(Double.class),
     SETPOINT_POSITION_PERCENT(Integer.class),
     SETPOINT_TEMPERATURE_CELSIUS(Double.class),
     SUPPLY_VOLTAGE_V("SUPPLY_VOLTAGE_V", Double.class),
@@ -107,12 +107,12 @@ public enum DeviceParameter {
         return userName;
     }
 
-    private static final Map<String, DeviceParameter> nameToParameterMapping;
+    private static final Map<String, DeviceParameter> NAME_TO_PARAMETER_MAPPING;
 
     static {
-        nameToParameterMapping = new HashMap<>();
+        NAME_TO_PARAMETER_MAPPING = new HashMap<>();
         for (final DeviceParameter param : DeviceParameter.values()) {
-            nameToParameterMapping.put(param.getUserName(), param);
+            NAME_TO_PARAMETER_MAPPING.put(param.getUserName(), param);
         }
     }
 
@@ -123,7 +123,7 @@ public enum DeviceParameter {
      * @return Return a device parameter if the string is known, null if it is unknown.
      */
     public static DeviceParameter fromString(final String parameter) {
-        return nameToParameterMapping.get(parameter);
+        return NAME_TO_PARAMETER_MAPPING.get(parameter);
     }
 
     public static Class<?> getSupportedClass(final DeviceParameter parameter) throws IllegalDeviceParameterException {
