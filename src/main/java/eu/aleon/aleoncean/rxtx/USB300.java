@@ -26,11 +26,13 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +101,7 @@ public class USB300 implements ESP3Connector {
         try {
             inputQueue = new LinkedBlockingQueue<>();
             inputQueueResponse = new LinkedBlockingQueue<>();
-            //reader = new USB300ReaderThread(serialPort, inputQueue, inputQueueResponse);
+            // reader = new USB300ReaderThread(serialPort, inputQueue, inputQueueResponse);
             reader = new USB300ReaderListener(serialPort, inputQueue, inputQueueResponse);
             reader.start();
         } catch (final IOException ex) {
@@ -169,12 +171,17 @@ public class USB300 implements ESP3Connector {
 
     @Override
     public ResponsePacket write(final ESP3Packet packet) {
+        if (outputQueue == null) {
+            LOGGER.warn("Cancel write: It seems I am not connected.");
+            return null;
+        }
+
         final byte[] raw = packet.generateRaw();
 
         outputQueue.add(raw);
 
         try {
-            final byte[] responseRaw = (byte[]) inputQueueResponse.poll(ESP3Timeout.RESPONSE, TimeUnit.MILLISECONDS);
+            final byte[] responseRaw = inputQueueResponse.poll(ESP3Timeout.RESPONSE, TimeUnit.MILLISECONDS);
             if (responseRaw == null) {
                 return null;
             }
@@ -189,8 +196,13 @@ public class USB300 implements ESP3Connector {
 
     @Override
     public ESP3Packet read(final long timeout, final TimeUnit unit) throws ReaderShutdownException {
+        if (inputQueue == null) {
+            LOGGER.warn("Cancel read: It seems I am not connected.");
+            return null;
+        }
+
         try {
-            final byte[] raw = (byte[]) inputQueue.poll(timeout, unit);
+            final byte[] raw = inputQueue.poll(timeout, unit);
 
             if (raw == null) {
                 return null;

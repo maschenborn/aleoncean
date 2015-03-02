@@ -75,32 +75,30 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteDeviceEEPD20108.class);
 
-    private Long energy;
-    private Long power;
+    private Double energy;
+    private Double power;
     private Boolean on;
 
-    public RemoteDeviceEEPD20108(final ESP3Connector conn,
-                                 final EnOceanId addressRemote,
-                                 final EnOceanId addressLocal) {
+    public RemoteDeviceEEPD20108(final ESP3Connector conn, final EnOceanId addressRemote, final EnOceanId addressLocal) {
         super(conn, addressRemote, addressLocal);
     }
 
-    public Long getEnergy() {
+    public Double getEnergy() {
         return energy;
     }
 
-    public void setEnergy(final DeviceParameterUpdatedInitiation initiation, final Long energy) {
-        final Long oldEnergy = this.energy;
+    public void setEnergy(final DeviceParameterUpdatedInitiation initiation, final Double energy) {
+        final Double oldEnergy = this.energy;
         this.energy = energy;
         fireParameterChanged(DeviceParameter.ENERGY_WS, initiation, oldEnergy, energy);
     }
 
-    public Long getPower() {
+    public Double getPower() {
         return power;
     }
 
-    public void setPower(final DeviceParameterUpdatedInitiation initiation, final Long power) {
-        final Long oldPower = this.power;
+    public void setPower(final DeviceParameterUpdatedInitiation initiation, final Double power) {
+        final Double oldPower = this.power;
         this.power = power;
         fireParameterChanged(DeviceParameter.POWER_W, initiation, oldPower, power);
     }
@@ -141,16 +139,10 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         switchOnOff(DeviceParameterUpdatedInitiation.RADIO_PACKET, false);
         ThreadUtil.sleep(20);
 
-        configureSwitch();
+        sendConfiguration();
         ThreadUtil.sleep(20);
 
-        configurePowerMeasurement();
-        ThreadUtil.sleep(20);
-
-        configureEnergyMeasurement();
-        ThreadUtil.sleep(20);
-
-        msc.setUserDataRaw(new byte[]{(byte) 0x02, (byte) 0x50, (byte) 0x00, (byte) 0x00});
+        msc.setUserDataRaw(new byte[] { (byte) 0x02, (byte) 0x50, (byte) 0x00, (byte) 0x00 });
         send(msc);
         ThreadUtil.sleep(20);
 
@@ -195,9 +187,9 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         data[0] = (manu & 0x0FF0) >> 4;
         data[1] = (manu & 0x000F) << 4;
         /*
-         data[1] |= (x & 0x0F0000) >> 16;
-         data[2] = (byte) ((x & 0x00FF00) >> 8);
-         data[3] = (byte) ((x & 0x00000FF));
+         * data[1] |= (x & 0x0F0000) >> 16;
+         * data[2] = (byte) ((x & 0x00FF00) >> 8);
+         * data[3] = (byte) ((x & 0x00000FF));
          */
 
         // Set the info LED to color red.
@@ -215,6 +207,16 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         send(userData);
     }
 
+    private void sendConfiguration() {
+        configureSwitch();
+        ThreadUtil.sleep(20);
+
+        configurePowerMeasurement();
+        ThreadUtil.sleep(20);
+
+        configureEnergyMeasurement();
+    }
+
     private void configureSwitch() {
         // Configure the one channel of the actuator.
         final UserDataEEPD201CMD02 ud = new UserDataEEPD201CMD02();
@@ -229,6 +231,7 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         ud.setUserInterfaceIndication(UserInterfaceIndication.DAY_OPERATION);
         ud.setPowerFailure(PowerFailure.DISABLE_DETECTION_OR_DETECTION_NOT_SUPPORTED);
         ud.setDefaultState(DefaultState.REMEMBER_PREVIOUS_STATE);
+        LOGGER.trace("Send configuration ({} => {}): switch", getAddressLocal(), getAddressRemote());
         send(ud);
     }
 
@@ -243,6 +246,7 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
             ud.setMeasurementDeltaToBeReported(1);
             ud.setMaximumTimeBetweenTwoSubsequentActuator(130);
             ud.setMinimumTimeBetweenTwoSubsequentActuator(15);
+            LOGGER.trace("Send configuration ({} => {}): energy measurement", getAddressLocal(), getAddressRemote());
             send(ud);
         } catch (final UserDataScaleValueException ex) {
             LOGGER.warn("Something went wrong on configure energy measurement.", ex);
@@ -260,18 +264,19 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
             ud.setMeasurementDeltaToBeReported(15);
             ud.setMaximumTimeBetweenTwoSubsequentActuator(130);
             ud.setMinimumTimeBetweenTwoSubsequentActuator(15);
+            LOGGER.trace("Send configuration ({} => {}): power measurement", getAddressLocal(), getAddressRemote());
             send(ud);
         } catch (final UserDataScaleValueException ex) {
             LOGGER.warn("Something went wrong on configure power measurement.", ex);
         }
     }
 
-    public void handleIncomingEnergyValue(final long wattSeconds) {
+    public void handleIncomingEnergyValue(final double wattSeconds) {
         LOGGER.debug("{} - Received new energy value: {} Ws", getAddressRemote(), wattSeconds);
         setEnergy(DeviceParameterUpdatedInitiation.RADIO_PACKET, wattSeconds);
     }
 
-    public void handleIncomingPowerValue(final long watt) {
+    public void handleIncomingPowerValue(final double watt) {
         LOGGER.debug("{} - Received new power value: {} W", getAddressRemote(), watt);
         setPower(DeviceParameterUpdatedInitiation.RADIO_PACKET, watt);
     }
@@ -324,16 +329,25 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         }
     }
 
+    private void parseRadioPacketVLDCmdShouldBeSent(final UserDataEEPD201 userData) {
+        LOGGER.warn("This command (0x%02X) should be sent to an actuator... Skip it.", userData.getCmd());
+    }
+
     private void parseRadioPacketVLD(final RadioPacketVLD packet) {
         final UserDataEEPD201 userData = UserDataEEPD201Factory.createFromUserDataRaw(packet.getUserDataRaw());
-        if (userData instanceof UserDataEEPD201CMD01
-            || userData instanceof UserDataEEPD201CMD02
-            || userData instanceof UserDataEEPD201CMD03
-            || userData instanceof UserDataEEPD201CMD05
-            || userData instanceof UserDataEEPD201CMD06) {
-            LOGGER.warn("This command (0x%02X) shoule be sent to an actuator... Skip it.", userData.getCmd());
+
+        if (userData instanceof UserDataEEPD201CMD01) {
+            parseRadioPacketVLDCmdShouldBeSent(userData);
+        } else if (userData instanceof UserDataEEPD201CMD02) {
+            parseRadioPacketVLDCmdShouldBeSent(userData);
+        } else if (userData instanceof UserDataEEPD201CMD03) {
+            parseRadioPacketVLDCmdShouldBeSent(userData);
         } else if (userData instanceof UserDataEEPD201CMD04) {
             handleIncomingActuatorStatusResponse((UserDataEEPD201CMD04) userData);
+        } else if (userData instanceof UserDataEEPD201CMD05) {
+            parseRadioPacketVLDCmdShouldBeSent(userData);
+        } else if (userData instanceof UserDataEEPD201CMD06) {
+            parseRadioPacketVLDCmdShouldBeSent(userData);
         } else if (userData instanceof UserDataEEPD201CMD07) {
             handleIncomingActuatorMeasurementResponse((UserDataEEPD201CMD07) userData);
         } else {
@@ -353,8 +367,8 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
     @Override
     public void parseRadioPacket(final RadioPacket packet) {
         if (!packet.getSenderId().equals(getAddressRemote())) {
-            LOGGER.warn("Got a package that sender ID does not fit (senderId={}, expected={}).",
-                        packet.getSenderId(), getAddressRemote());
+            LOGGER.warn("Got a package that sender ID does not fit (senderId={}, expected={}).", packet.getSenderId(),
+                    getAddressRemote());
             return;
         }
 
@@ -372,6 +386,7 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         params.add(DeviceParameter.ENERGY_WS);
         params.add(DeviceParameter.POWER_W);
         params.add(DeviceParameter.SWITCH);
+        params.add(DeviceParameter.TMP_SEND_CONFIGURATION);
     }
 
     @Override
@@ -389,11 +404,17 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
     }
 
     @Override
-    public void setByParameter(final DeviceParameter parameter, final Object value) throws IllegalDeviceParameterException {
+    public void setByParameter(final DeviceParameter parameter, final Object value)
+            throws IllegalDeviceParameterException {
         assert DeviceParameter.getSupportedClass(parameter).isAssignableFrom(value.getClass());
         switch (parameter) {
             case SWITCH:
                 switchOnOff(DeviceParameterUpdatedInitiation.SET_PARAMETER, (Boolean) value);
+                break;
+            case TMP_SEND_CONFIGURATION:
+                if (value instanceof Boolean && (Boolean) value) {
+                    sendConfiguration();
+                }
                 break;
             default:
                 super.setByParameter(parameter, value);
