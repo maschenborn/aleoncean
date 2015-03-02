@@ -98,7 +98,7 @@ public abstract class RemoteDeviceEEPA504 extends StandardDevice implements Remo
         if (packet instanceof RadioPacket4BS) {
             parseRadioPacket4BS((RadioPacket4BS) packet);
         } else {
-            LOGGER.warn("Don't know how to handle radio choice 0x%02X.", packet.getChoice());
+            LOGGER.warn("Don't know how to handle radio choice {}", String.format("0x%02X", packet.getChoice()));
         }
     }
 

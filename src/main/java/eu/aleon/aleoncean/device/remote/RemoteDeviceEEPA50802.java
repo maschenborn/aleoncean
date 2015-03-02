@@ -16,8 +16,10 @@
 package eu.aleon.aleoncean.device.remote;
 
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import eu.aleon.aleoncean.device.DeviceParameter;
 import eu.aleon.aleoncean.device.DeviceParameterUpdatedInitiation;
 import eu.aleon.aleoncean.device.IllegalDeviceParameterException;
@@ -116,7 +118,7 @@ public class RemoteDeviceEEPA50802 extends StandardDevice implements RemoteDevic
         if (packet instanceof RadioPacket4BS) {
             parseRadioPacket4BS((RadioPacket4BS) packet);
         } else {
-            LOGGER.warn(String.format("Don't know how to handle radio choice 0x%02X.", packet.getChoice()));
+            LOGGER.warn("Don't know how to handle radio choice {}", String.format("0x%02X", packet.getChoice()));
         }
     }
 
