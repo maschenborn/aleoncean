@@ -23,4 +23,25 @@ public class ReaderShutdownException extends Exception {
 
     private static final long serialVersionUID = -1405905679676209283L;
 
+    public ReaderShutdownException() {
+        super();
+    }
+
+    public ReaderShutdownException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    public ReaderShutdownException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ReaderShutdownException(String message) {
+        super(message);
+    }
+
+    public ReaderShutdownException(Throwable cause) {
+        super(cause);
+    }
+
 }
