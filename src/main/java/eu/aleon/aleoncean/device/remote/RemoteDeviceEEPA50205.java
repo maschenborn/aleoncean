@@ -33,7 +33,7 @@ import eu.aleon.aleoncean.rxtx.ESP3Connector;
 
 /**
  *
- * @author Thomas Stezaly <thomas.stezaly@aleon.eu>
+ * @author Thomas Stezaly {@literal <thomas.stezaly@aleon.eu>}
  */
 public class RemoteDeviceEEPA50205 extends StandardDevice implements RemoteDevice {
 

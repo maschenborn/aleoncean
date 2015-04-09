@@ -27,7 +27,7 @@ import eu.aleon.aleoncean.packet.radio.userdata.UserDataEEPA50205;
 import eu.aleon.aleoncean.packet.radio.userdata.UserDataScaleValueException;
 
 /**
- * @author Thomas Stezaly (thomas.stezaly@aleuon.eu)
+ * @author Thomas Stezaly {@literal <thomas.stezaly@aleon.eu>}
  *
  */
 public class RemoteDeviceEEPA50205Test {

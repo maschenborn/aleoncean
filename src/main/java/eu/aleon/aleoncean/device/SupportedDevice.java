@@ -39,7 +39,7 @@ import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPF61001;
  * RD (remote device) or LD (local device) _ EEP (separator is a dash character).
  * So, for example LD_F6-02-01, RD_D2-01-08, ...
  *
- * @author Markus Rathgeb <maggu2810@gmail.com>
+ * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
 public enum SupportedDevice {
     LD_A53808CMD2("LD_A5-38-08_CMD02", LocalDeviceEEPA53808CMD02.class),

@@ -45,7 +45,7 @@ import eu.aleon.aleoncean.values.WindowHandlePosition;
  * - TEMPERATURE_CONTROL_CUR_TEMP: double, the current temperature used for a temperature control algorithm
  * - WINDOW_HANDLE_POSITION: WindowHandlePosition
  *
- * @author Markus Rathgeb <maggu2810@gmail.com>
+ * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
 public enum DeviceParameter {
 

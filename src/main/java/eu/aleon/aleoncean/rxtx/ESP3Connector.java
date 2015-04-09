@@ -24,7 +24,7 @@ import eu.aleon.aleoncean.packet.ResponsePacket;
  *
  * This interface should describe how we abstract the hardware communication e.g. with a EnOcean stick.
  *
- * @author Markus Rathgeb <maggu2810@gmail.com>
+ * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
 public interface ESP3Connector {
 
