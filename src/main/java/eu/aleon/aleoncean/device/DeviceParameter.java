@@ -18,6 +18,7 @@ package eu.aleon.aleoncean.device;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.aleon.aleoncean.values.OpenClosed;
 import eu.aleon.aleoncean.values.RockerSwitchAction;
 import eu.aleon.aleoncean.values.WindowHandlePosition;
 
@@ -55,6 +56,7 @@ public enum DeviceParameter {
     ILLUMINATION_LUX("ILLUMINATION_LUX", Double.class),
     MOTION("MOTION", Boolean.class),
     OCCUPANCY_BUTTON("OCCUPANCY_BUTTON", Boolean.class),
+    OPEN_CLOSED(OpenClosed.class),
     POSITION_PERCENT(Integer.class),
     POWER_W(Double.class),
     SETPOINT_POSITION_PERCENT(Integer.class),
