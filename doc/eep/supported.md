@@ -41,7 +41,7 @@
 * TEMPERATURE_CONTROL_ENABLE (rw): Flag if the set point is controlled by temperature (or position).
 * TEMPERATURE_CONTROL_CUR_TEMP (rw): The current temperature used for proportional–integral controller (used if TEMPERATURE_CONTROL_ENABLE is true).
 
-__Pre-requirement__: [teach-in](#remote device, send data)
+__Pre-requirement__: [teach-in](#remotedevicesenddata)
 
 ## A5-38-08 - CMD 0x02
 
@@ -60,7 +60,11 @@ __Pre-requirement__: [teach-in](#remote device, send data)
 
 This was tested with ["Funktionsstecker FS1" of "Telefunken Smart Building"](http://www.telefunken-sb.de/produkte/aufputz/funktionsstecker.html).
 
-__Pre-requirement__: [teach-in](#remote device, send data)
+__Pre-requirement__: [teach-in](#remotedevicesenddata)
+
+## D5-00-01
+
+* OPEN_CLOSED (r): The current state of the contact.
 
 ## F6-02-01
 
