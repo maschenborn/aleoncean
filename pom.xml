@@ -4,7 +4,7 @@
 
     <groupId>eu.aleon</groupId>
     <artifactId>aleoncean</artifactId>
-    <version>1.8-SNAPSHOT</version>
+    <version>1.8</version>
     <name>aleoncean</name>
     <description>A java library to access an EnOcean (http://www.enocean.com/) USB300 serial device using ESP3.</description>
 
@@ -70,7 +70,7 @@
         <url>https://github.com/aleon-GmbH/aleoncean</url>
         <connection>scm:git:git@github.com:aleon-GmbH/aleoncean.git</connection>
         <developerConnection>scm:git:git@github.com:aleon-GmbH/aleoncean.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>aleoncean-1.8</tag>
     </scm>
 
     <build>
