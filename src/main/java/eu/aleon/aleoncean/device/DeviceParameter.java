@@ -25,30 +25,33 @@ import eu.aleon.aleoncean.values.WindowHandlePosition;
 /**
  * Collection of device parameters.
  *
- * To optimize for access speed and memory footprint, we use static objects.
- * For every parameter you add, you have to extend the "infos" member of the "Infos" class.
+ * To optimize for access speed and memory footprint, we use static objects. For every parameter you add, you have to
+ * extend the "infos" member of the "Infos" class.
  *
- * - BUTTON_DIM_A/B: RockerSwitchAction
- * - ENERGY_WS: long, power value, unit watt seconds
- * - HUMIDITY_PERCENT: double, humidity, unit percent
- * - ILLUMINATION_LUX: double, illumination, unit lux
- * - MOTION: boolean, motion
- * - OCCUPANCY_BUTTON: boolean, true: pressed, false: released
- * - POSITION_PERCENT: integer, a position value, unit percent
- * - POWER_W: long, power value, unit watt
- * - SETPOINT_POSITION_PERCENT: integer, a set point position value, unit percent
- * - SETPOINT_TEMPERATURE_CELSIUS: double, a set point temperature value, unit celsius
- * - SUPPLY_VOLTAGE_V: double, unit volt
- * - SWITCH: boolean, true: on, false: off
- * - TEMPERATURE_CELSIUS: double, temperature, unit degree Celsius
- * - TEMPERATURE_CONTROL_ENABLE: boolean, flag if a temperature control algorithm is enabled
- * - TEMPERATURE_CONTROL_CUR_TEMP: double, the current temperature used for a temperature control algorithm
- * - WINDOW_HANDLE_POSITION: WindowHandlePosition
+ * <p>
+ * <ul>
+ * <li>BUTTON_DIM_A/B: RockerSwitchAction
+ * <li>ENERGY_WS: long, power value, unit watt seconds
+ * <li>HUMIDITY_PERCENT: double, humidity, unit percent
+ * <li>ILLUMINATION_LUX: double, illumination, unit lux
+ * <li>MOTION: boolean, motion
+ * <li>OCCUPANCY_BUTTON: boolean, true: pressed, false: released
+ * <li>POSITION_PERCENT: integer, a position value, unit percent - POWER_W: long, power value, unit watt
+ * <li>SETPOINT_POSITION_PERCENT: integer, a set point position value, unit percent
+ * <li>SETPOINT_TEMPERATURE_CELSIUS: double, a set point temperature value, unit celsius
+ * <li>SUPPLY_VOLTAGE_V: double, unit volt
+ * <li>SWITCH: boolean, true: on, false: off
+ * <li>TEMPERATURE_CELSIUS: double, temperature, unit degree Celsius
+ * <li>TEMPERATURE_CONTROL_ENABLE: boolean, flag if a temperature control algorithm is enabled
+ * <li>TEMPERATURE_CONTROL_CUR_TEMP: double, the current temperature used for a temperature control algorithm
+ * <li>WINDOW_HANDLE_POSITION: WindowHandlePosition
+ * </ul>
  *
  * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
 public enum DeviceParameter {
 
+    ANGLE_DEGREE(Integer.class),
     BUTTON_DIM_A("BUTTON_DIM_A", RockerSwitchAction.class),
     BUTTON_DIM_B("BUTTON_DIM_B", RockerSwitchAction.class),
     ENERGY_WS("ENERGY_WS", Double.class),
@@ -67,10 +70,8 @@ public enum DeviceParameter {
     TEMPERATURE_CONTROL_ENABLE(Boolean.class),
     TEMPERATURE_CONTROL_CUR_TEMP(Double.class),
     WINDOW_HANDLE_POSITION("WINDOW_HANDLE_POSITION", WindowHandlePosition.class),
-
     /* temporary workaround to force sending configuration to device */
     TMP_SEND_CONFIGURATION(Boolean.class),
-
     TMP_RECV_SERVICE_ON(Boolean.class),
     TMP_RECV_ENERGY_INPUT_ENABLED(Boolean.class),
     TMP_RECV_ENERGY_STORAGE_SUFFICIENT(Boolean.class),

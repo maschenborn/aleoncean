@@ -66,7 +66,10 @@ import eu.aleon.aleoncean.util.ThreadUtil;
  * Abstract communication with a device using EEP D20108.
  *
  * Tested with device(s):
- * - Telefunken FS1
+ * <p>
+ * <ul>
+ * <li>Telefunken FS1
+ * </ul>
  *
  * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
@@ -78,8 +81,14 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
     private Double power;
     private Boolean on;
 
-    public RemoteDeviceEEPD20108(final ESP3Connector conn, final EnOceanId addressRemote, final EnOceanId addressLocal) {
+    public RemoteDeviceEEPD20108(final ESP3Connector conn, final EnOceanId addressRemote,
+            final EnOceanId addressLocal) {
         super(conn, addressRemote, addressLocal);
+    }
+
+    @Override
+    public void initialize() {
+        querySwitchOnOff();
     }
 
     public Double getEnergy() {
@@ -153,9 +162,8 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         /**
          * Let's do some reverse engineering of the MSC package send to the FS1.
          *
-         * The data part (after the choice / R-ORG) consists of four bytes.
-         * MSC packages contains 1,5 bytes Manufacturer ID.
-         * So, there are 2,5 bytes / 5 nibbles to code data.
+         * The data part (after the choice / R-ORG) consists of four bytes. MSC packages contains 1,5 bytes Manufacturer
+         * ID. So, there are 2,5 bytes / 5 nibbles to code data.
          *
          * It seems, that the MSC is used to control the status and the info LED.
          *
@@ -167,15 +175,20 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
          * DB0,7 - DB1,4: manufacturer ID
          *
          * Tested with FS1 switched OFF:
-         * ===
-         * DB2,7 - DB2,6: control the info LED color
-         * - 0b00 = off
-         * - 0b01 = green
-         * - 0b10 = yellow
-         * - 0b11 = red
-         * DB3,0: control the status LED color
-         * - 0b0 = off
-         * - 0b1 = yellow
+         * <p>
+         * <ul>
+         * <li>DB2,7 - DB2,6: control the info LED color
+         * <ul>
+         * <li>0b00 = off
+         * <li>0b01 = green
+         * <li>0b10 = yellow
+         * <li>0b11 = red
+         * </ul>
+         * <li>DB3,0: control the status LED color
+         * <ul>
+         * <lu>0b0 = off
+         * <li>0b1 = yellow
+         * </ul>
          */
         final byte[] data = new byte[4];
 
@@ -332,6 +345,7 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         LOGGER.warn("This command (0x%02X) should be sent to an actuator... Skip it.", userData.getCmd());
     }
 
+    @Override
     protected void parseRadioPacketVLD(final RadioPacketVLD packet) {
         // if (!packet.getSenderId().equals(getAddressRemote())) {
         // LOGGER.warn("Got a package that sender ID does not fit (senderId={}, expected={}).", packet.getSenderId(),
@@ -360,6 +374,7 @@ public class RemoteDeviceEEPD20108 extends StandardDevice implements RemoteDevic
         }
     }
 
+    @Override
     protected void parseRadioPacketUTE(final RadioPacketUTE packet) {
         // if (!packet.getSenderId().equals(getAddressRemote())) {
         // LOGGER.warn("Got a package that sender ID does not fit (senderId={}, expected={}).", packet.getSenderId(),
