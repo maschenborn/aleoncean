@@ -16,7 +16,10 @@
 package eu.aleon.aleoncean.packet.radio.userdata;
 
 import java.util.Arrays;
+
 import eu.aleon.aleoncean.packet.RadioPacket;
+import eu.aleon.aleoncean.packet.radio.userdata.utils.UserDataBitRange;
+import eu.aleon.aleoncean.packet.radio.userdata.utils.UserDataRangeScale;
 import eu.aleon.aleoncean.util.Bits;
 import eu.aleon.aleoncean.util.CalculationUtil;
 
@@ -90,7 +93,8 @@ public abstract class UserData {
         return getDataRange(userData, startDB, startBit, endDB, endBit);
     }
 
-    public static long getDataRange(final byte[] userData, final int startDB, final int startBit, final int endDB, final int endBit) {
+    public static long getDataRange(final byte[] userData, final int startDB, final int startBit, final int endDB,
+            final int endBit) {
         assert startDB >= endDB || (startDB == endDB && startBit >= endBit);
         assert startDB <= userData.length - 1;
 
@@ -100,7 +104,8 @@ public abstract class UserData {
         return Bits.getBitsFromBytes(userData, realStartByte, startBit, realEndByte, endBit);
     }
 
-    protected void setDataRange(final long value, final int startDB, final int startBit, final int endDB, final int endBit) {
+    protected void setDataRange(final long value, final int startDB, final int startBit, final int endDB,
+            final int endBit) {
         // e.g. db3.5 ... db2.7
         assert startDB >= endDB || (startDB == endDB && startBit >= endBit);
         assert startDB <= userData.length - 1;
@@ -114,22 +119,21 @@ public abstract class UserData {
     /**
      * Extract a value of a given bit range and convert it to a scaled one.
      *
-     * @param startDB  The data byte (EEP order) the value extraction should be start.
+     * @param startDB The data byte (EEP order) the value extraction should be start.
      * @param startBit The bit of the start byte the value extraction should be start.
-     * @param endDB    The data byte (EEP order) the value extraction should be end.
-     * @param endBit   The bit of the end byte the value extraction should be end.
+     * @param endDB The data byte (EEP order) the value extraction should be end.
+     * @param endBit The bit of the end byte the value extraction should be end.
      * @param rangeMin The lower limit of the range.
      * @param rangeMax The upper limit of the range.
      * @param scaleMin The lower limit of the scaled value.
      * @param scaleMax The upper limit of the scaled value.
      * @return Return a scaled value that does fit in given range.
-     * @throws UserDataScaleValueException This exception is raised if the value extracted from given bit range does
-     *                                     not fit in range.
+     * @throws UserDataScaleValueException This exception is raised if the value extracted from given bit range does not
+     *             fit in range.
      */
     protected double getScaleValue(final int startDB, final int startBit, final int endDB, final int endBit,
-                                   final long rangeMin, final long rangeMax,
-                                   final double scaleMin, final double scaleMax)
-            throws UserDataScaleValueException {
+            final long rangeMin, final long rangeMax, final double scaleMin, final double scaleMax)
+                    throws UserDataScaleValueException {
         final long raw = getDataRange(startDB, startBit, endDB, endBit);
         return getScaleValue(raw, rangeMin, rangeMax, scaleMin, scaleMax);
     }
@@ -137,7 +141,7 @@ public abstract class UserData {
     /**
      * Convert a raw value to a scaled one with respect ranges.
      *
-     * @param raw      The value that should be scaled.
+     * @param raw The value that should be scaled.
      * @param rangeMin The lower limit of the range.
      * @param rangeMax The upper limit of the range.
      * @param scaleMin The lower limit of the scaled value.
@@ -145,17 +149,15 @@ public abstract class UserData {
      * @return Return a scaled value that does fit in given range.
      * @throws UserDataScaleValueException This exception is raised if the given value does not fit in range.
      */
-    protected double getScaleValue(final long raw,
-                                   final long rangeMin, final long rangeMax,
-                                   final double scaleMin, final double scaleMax)
-            throws UserDataScaleValueException {
+    protected double getScaleValue(final long raw, final long rangeMin, final long rangeMax, final double scaleMin,
+            final double scaleMax) throws UserDataScaleValueException {
 
         /*
          * The range could also be inverse (255..0 instead of 0..255), so we have to improve the check.
          */
-        if (raw < rangeMin && raw < rangeMax
-            || raw > rangeMin && raw > rangeMax) {
-            throw new UserDataScaleValueException(String.format("The coded value does not fit in range (min: %d, max: %d, value: %d).", rangeMin, rangeMax, raw));
+        if (raw < rangeMin && raw < rangeMax || raw > rangeMin && raw > rangeMax) {
+            throw new UserDataScaleValueException(String.format(
+                    "The coded value does not fit in range (min: %d, max: %d, value: %d).", rangeMin, rangeMax, raw));
         }
 
         final double scale = CalculationUtil.rangeToScale(raw, rangeMin, rangeMax, scaleMin, scaleMax);
@@ -165,7 +167,7 @@ public abstract class UserData {
     /**
      * Convert a value to a raw value with respect ranges.
      *
-     * @param scale    The value that should be converted to a raw one.
+     * @param scale The value that should be converted to a raw one.
      * @param scaleMin The lower limit of the value.
      * @param scaleMax The upper limit of the value.
      * @param rangeMin The lower limit of the raw value.
@@ -173,23 +175,72 @@ public abstract class UserData {
      * @return Return a raw value that does fit in given range.
      * @throws UserDataScaleValueException This exception is raised if the given value does not fit in range.
      */
-    protected long getRangeValue(final double scale,
-                                 final double scaleMin, final double scaleMax,
-                                 final long rangeMin, final long rangeMax)
-            throws UserDataScaleValueException {
+    protected long getRangeValue(final double scale, final double scaleMin, final double scaleMax, final long rangeMin,
+            final long rangeMax) throws UserDataScaleValueException {
 
         /*
          * The range could also be inverse (255..0 instead of 0..255), so we have to improve the check.
          */
-        if (scale < scaleMin && scale < scaleMax
-            || scale > scaleMin && scale > scaleMax) {
+        if (scale < scaleMin && scale < scaleMax || scale > scaleMin && scale > scaleMax) {
             throw new UserDataScaleValueException(String.format(
-                    "The scale value does not fit in range (min: %f, max: %f, value: %f).",
-                    scaleMin, scaleMax, scale));
+                    "The scale value does not fit in range (min: %f, max: %f, value: %f).", scaleMin, scaleMax, scale));
         }
 
         final long raw = CalculationUtil.scaleToRange(scale, scaleMin, scaleMax, rangeMin, rangeMax);
         return raw;
+    }
+
+    protected void encodeBit(final UserDataBitRange bitRange, final boolean value) {
+        setDataBit(bitRange.getStartByte(), bitRange.getStartBit(), value);
+    }
+
+    protected boolean decodeBit(final UserDataBitRange bitRange) {
+        return decodeBit(userData, bitRange);
+    }
+
+    protected static boolean decodeBit(final byte[] userData, final UserDataBitRange bitRange) {
+        return getDataBit(userData, bitRange.getStartByte(), bitRange.getStartBit()) != 0;
+    }
+
+    protected void encodeData(final UserDataBitRange bitRange, final UserDataRangeScale rangeScale, final double data)
+            throws UserDataScaleValueException {
+        if (bitRange.isBit()) {
+            encodeBit(bitRange, data != 0);
+        } else {
+            final long raw = getRangeValue(data, rangeScale.getScaleMin(), rangeScale.getScaleMax(),
+                    rangeScale.getRangeMin(), rangeScale.getRangeMax());
+            setDataRange(raw, bitRange.getStartByte(), bitRange.getStartBit(), bitRange.getEndByte(),
+                    bitRange.getEndBit());
+        }
+    }
+
+    protected void encodeDataRaw(final UserDataBitRange bitRange, final long data) {
+        if (bitRange.isBit()) {
+            encodeBit(bitRange, data != 0);
+        } else {
+            setDataRange(data, bitRange.getStartByte(), bitRange.getStartBit(), bitRange.getEndByte(),
+                    bitRange.getEndBit());
+        }
+    }
+
+    protected double decodeData(final UserDataBitRange bitRange, final UserDataRangeScale rangeScale)
+            throws UserDataScaleValueException {
+        if (bitRange.isBit()) {
+            return decodeBit(bitRange) ? 1 : 0;
+        } else {
+            return getScaleValue(bitRange.getStartByte(), bitRange.getStartBit(), bitRange.getEndByte(),
+                    bitRange.getEndBit(), rangeScale.getRangeMin(), rangeScale.getRangeMax(), rangeScale.getScaleMin(),
+                    rangeScale.getScaleMax());
+        }
+    }
+
+    protected long decodeDataRaw(final UserDataBitRange bitRange) {
+        if (bitRange.isBit()) {
+            return decodeBit(bitRange) ? 1 : 0;
+        } else {
+            return getDataRange(bitRange.getStartByte(), bitRange.getStartBit(), bitRange.getEndByte(),
+                    bitRange.getEndBit());
+        }
     }
 
     @Override

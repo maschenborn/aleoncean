@@ -24,11 +24,23 @@ public class UserDataScaleValueException extends Exception {
     private static final long serialVersionUID = -1145068221266062874L;
 
     public UserDataScaleValueException() {
-        super();
     }
 
     public UserDataScaleValueException(final String message) {
         super(message);
+    }
+
+    public UserDataScaleValueException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public UserDataScaleValueException(final Throwable cause) {
+        super(cause);
+    }
+
+    protected UserDataScaleValueException(final String message, final Throwable cause, final boolean enableSuppression,
+            final boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }

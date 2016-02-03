@@ -16,6 +16,7 @@
 package eu.aleon.aleoncean.device;
 
 import java.util.Set;
+
 import eu.aleon.aleoncean.packet.EnOceanId;
 import eu.aleon.aleoncean.packet.RadioPacket;
 
@@ -24,6 +25,15 @@ import eu.aleon.aleoncean.packet.RadioPacket;
  * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
 public interface Device extends Comparable<Device> {
+
+    /**
+     * This function is used to trigger the initialization phase.
+     *
+     * <p>
+     * The initialization could e.g. request parameters from the real device etc.
+     * </p>
+     */
+    void initialize();
 
     /**
      * Parse a radio packet.
@@ -56,10 +66,11 @@ public interface Device extends Comparable<Device> {
      * Set a value by using device parameter.
      *
      * @param parameter The parameter that value should be changed.
-     * @param value     The value that should be set.
+     * @param value The value that should be set.
      * @throws IllegalDeviceParameterException if the device parameter could not be handled.
      */
-    public void setByParameter(final DeviceParameter parameter, final Object value) throws IllegalDeviceParameterException;
+    public void setByParameter(final DeviceParameter parameter, final Object value)
+            throws IllegalDeviceParameterException;
 
     /**
      * Get the EnOcean address of the remote / real device.

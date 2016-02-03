@@ -16,6 +16,7 @@
 package eu.aleon.aleoncean.packet.radio.userdata;
 
 import eu.aleon.aleoncean.packet.radio.RadioPacket4BS;
+import eu.aleon.aleoncean.packet.radio.userdata.utils.UserDataBitRange;
 
 /**
  *
@@ -25,11 +26,10 @@ public class UserData4BS extends UserData {
 
     public static final int DATA_LENGTH = 4;
 
-    private static final int TEACH_IN_DB = 0;
-    private static final int TEACH_IN_BIT = 3;
+    protected static final UserDataBitRange LRNB_BITRANGE = new UserDataBitRange(0, 3);
 
     public static boolean isTeachIn(final byte[] userData) {
-        return getDataBit(userData, TEACH_IN_DB, TEACH_IN_BIT) == 0;
+        return !decodeBit(userData, LRNB_BITRANGE);
     }
 
     public UserData4BS() {
@@ -46,7 +46,7 @@ public class UserData4BS extends UserData {
     }
 
     public void setTeachIn(final boolean teachIn) {
-        setDataBit(TEACH_IN_DB, TEACH_IN_BIT, teachIn ? 0 : 1);
+        encodeBit(LRNB_BITRANGE, !teachIn);
     }
 
     @Override
@@ -58,9 +58,7 @@ public class UserData4BS extends UserData {
 
     @Override
     public String toString() {
-        return String.format("UserData4BS{%s, teachIn=%b}",
-                             super.toString(),
-                             isTeachIn());
+        return String.format("UserData4BS{%s, teachIn=%b}", super.toString(), isTeachIn());
     }
 
 }

@@ -70,6 +70,10 @@ public abstract class StandardDevice implements Device {
         return addressLocal;
     }
 
+    @Override
+    public void initialize() {
+    }
+
     protected ResponsePacket send(final UserData userData) {
         return send(userData.generateRadioPacket());
     }
@@ -138,12 +142,12 @@ public abstract class StandardDevice implements Device {
             return getClass().toString().compareTo(o.getClass().toString());
         }
 
-        throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
-                                                                       // Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private void parseRadioPacketUnhandled(final RadioPacket packet) {
-        logger.warn("Don't know how to handle radio choice {}. {}", String.format("0x%02X", packet.getChoice()), packet);
+        logger.warn("Don't know how to handle radio choice {}. {}", String.format("0x%02X", packet.getChoice()),
+                packet);
     }
 
     protected void parseRadioPacket1BS(final RadioPacket1BS packet) {
@@ -181,8 +185,10 @@ public abstract class StandardDevice implements Device {
                     packet.getSenderId(), getAddressRemote(), packet);
         }
         if (!packet.getDestinationId().equals(getAddressLocal())) {
-            logger.warn("Got a package that destination ID does not fit (destinationId={}, expected={}). {}",
-                    packet.getDestinationId(), getAddressLocal(), packet);
+            if (!packet.getDestinationId().equals(EnOceanId.getBroadcast())) {
+                logger.warn("Got a package that destination ID does not fit (destinationId={}, expected={}). {}",
+                        packet.getDestinationId(), getAddressLocal(), packet);
+            }
         }
 
         if (packet instanceof RadioPacket1BS) {
