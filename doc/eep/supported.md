@@ -23,6 +23,13 @@
 * MOTION (r)
 * OCCUPANCY_BUTTON (r)
 
+## A5-11-03
+
+### Parameter
+
+* ANGLE_DEGREE (r)
+* POSITION_PERCENT (r)
+
 ## A5-12-01
 
 ### Parameter
