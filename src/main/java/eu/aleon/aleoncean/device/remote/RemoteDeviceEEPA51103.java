@@ -15,6 +15,11 @@
  */
 package eu.aleon.aleoncean.device.remote;
 
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.aleon.aleoncean.device.DeviceParameter;
 import eu.aleon.aleoncean.device.DeviceParameterUpdatedInitiation;
 import eu.aleon.aleoncean.device.IllegalDeviceParameterException;
@@ -25,9 +30,6 @@ import eu.aleon.aleoncean.packet.radio.RadioPacket4BS;
 import eu.aleon.aleoncean.packet.radio.userdata.UserDataEEPA51103;
 import eu.aleon.aleoncean.packet.radio.userdata.UserDataScaleValueException;
 import eu.aleon.aleoncean.rxtx.ESP3Connector;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -40,12 +42,13 @@ public class RemoteDeviceEEPA51103 extends StandardDevice implements RemoteDevic
     private Integer position;
     private Integer angle;
 
-    public RemoteDeviceEEPA51103(ESP3Connector conn, EnOceanId addressRemote, EnOceanId addressLocal) {
+    public RemoteDeviceEEPA51103(final ESP3Connector conn, final EnOceanId addressRemote,
+            final EnOceanId addressLocal) {
         super(conn, addressRemote, addressLocal);
     }
 
     @Override
-    protected void parseRadioPacket4BS(RadioPacket4BS packet) {
+    protected void parseRadioPacket4BS(final RadioPacket4BS packet) {
         final UserDataEEPA51103 userData = new UserDataEEPA51103(packet.getUserDataRaw());
 
         try {
@@ -65,11 +68,10 @@ public class RemoteDeviceEEPA51103 extends StandardDevice implements RemoteDevic
         } catch (final UserDataScaleValueException ex) {
             logger.info("The incoming data package is (perhaps) not EEP conform (or this implementation).", ex);
         }
-        logger.info("{}", userData);
     }
 
     @Override
-    protected void fillParameters(Set<DeviceParameter> params) {
+    protected void fillParameters(final Set<DeviceParameter> params) {
         params.add(DeviceParameter.ANGLE_DEGREE);
         params.add(DeviceParameter.POSITION_PERCENT);
     }
@@ -87,7 +89,8 @@ public class RemoteDeviceEEPA51103 extends StandardDevice implements RemoteDevic
     }
 
     @Override
-    public void setByParameter(final DeviceParameter parameter, final Object value) throws IllegalDeviceParameterException {
+    public void setByParameter(final DeviceParameter parameter, final Object value)
+            throws IllegalDeviceParameterException {
         assert DeviceParameter.getSupportedClass(parameter).isAssignableFrom(value.getClass());
         super.setByParameter(parameter, value);
     }
