@@ -27,44 +27,45 @@ import eu.aleon.aleoncean.device.RemoteDevice;
 import eu.aleon.aleoncean.device.StandardDevice;
 import eu.aleon.aleoncean.packet.EnOceanId;
 import eu.aleon.aleoncean.packet.radio.RadioPacket4BS;
-import eu.aleon.aleoncean.packet.radio.userdata.UserDataEEPA51103;
 import eu.aleon.aleoncean.packet.radio.userdata.UserDataScaleValueException;
+import eu.aleon.aleoncean.packet.radio.userdata.eepa53808.UserDataEEPA53808CMD02;
 import eu.aleon.aleoncean.rxtx.ESP3Connector;
 
 /**
- *
  * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
-public class RemoteDeviceEEPA51103 extends StandardDevice implements RemoteDevice {
+public class RemoteDeviceEEPA53808CMD02 extends StandardDevice implements RemoteDevice {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(RemoteDeviceEEPA53808CMD02.class);
 
-    private Integer position;
-    private Integer angle;
+    private Integer dimmingValue;
+    private Boolean on;
 
-    public RemoteDeviceEEPA51103(final ESP3Connector conn, final EnOceanId addressRemote,
+    public RemoteDeviceEEPA53808CMD02(final ESP3Connector conn, final EnOceanId addressRemote,
             final EnOceanId addressLocal) {
         super(conn, addressRemote, addressLocal);
     }
 
     @Override
     protected void parseRadioPacket4BS(final RadioPacket4BS packet) {
-        final UserDataEEPA51103 userData = new UserDataEEPA51103(packet.getUserDataRaw());
+        final UserDataEEPA53808CMD02 userData = new UserDataEEPA53808CMD02(packet.getUserDataRaw());
 
         try {
-            // Check for angle
-            if (userData.isAngleAvailable()) {
-                setAngle(DeviceParameterUpdatedInitiation.RADIO_PACKET, userData.getAngle());
-            } else {
-                setAngle(DeviceParameterUpdatedInitiation.RADIO_PACKET, null);
+            // Check for position
+            switch (userData.getDimmingRange()) {
+                case ABSOLUTE_VALUE:
+                    setDimmingValue(DeviceParameterUpdatedInitiation.RADIO_PACKET, userData.getDimmingValueAbsolute());
+                    break;
+                case RELATIVE_VALUE:
+                    setDimmingValue(DeviceParameterUpdatedInitiation.RADIO_PACKET, userData.getDimmingValueRelative());
+                    break;
+                default:
+                    logger.warn("Unhandled dimming range value ({}).", userData.getDimmingRange());
+                    break;
             }
 
-            // Check for position
-            if (userData.isPositionAvailable()) {
-                setPosition(DeviceParameterUpdatedInitiation.RADIO_PACKET, userData.getBlindShutterPosition());
-            } else {
-                setPosition(DeviceParameterUpdatedInitiation.RADIO_PACKET, null);
-            }
+            // Check for switch
+            setOn(DeviceParameterUpdatedInitiation.RADIO_PACKET, new Boolean(userData.getSwitchingCommand()));
         } catch (final UserDataScaleValueException ex) {
             logger.info("The incoming data package is (perhaps) not EEP conform (or this implementation).", ex);
         }
@@ -72,17 +73,17 @@ public class RemoteDeviceEEPA51103 extends StandardDevice implements RemoteDevic
 
     @Override
     protected void fillParameters(final Set<DeviceParameter> params) {
-        params.add(DeviceParameter.ANGLE_DEGREE);
         params.add(DeviceParameter.POSITION_PERCENT);
+        params.add(DeviceParameter.SWITCH);
     }
 
     @Override
     public Object getByParameter(final DeviceParameter parameter) throws IllegalDeviceParameterException {
         switch (parameter) {
-            case ANGLE_DEGREE:
-                return getAngle();
             case POSITION_PERCENT:
-                return getPosition();
+                return getDimmingValue();
+            case SWITCH:
+                return getOn();
             default:
                 return super.getByParameter(parameter);
         }
@@ -92,27 +93,37 @@ public class RemoteDeviceEEPA51103 extends StandardDevice implements RemoteDevic
     public void setByParameter(final DeviceParameter parameter, final Object value)
             throws IllegalDeviceParameterException {
         assert DeviceParameter.getSupportedClass(parameter).isAssignableFrom(value.getClass());
-        super.setByParameter(parameter, value);
+        switch (parameter) {
+            case POSITION_PERCENT:
+                setDimmingValue(DeviceParameterUpdatedInitiation.SET_PARAMETER, (Integer) value);
+                break;
+            case SWITCH:
+                setOn(DeviceParameterUpdatedInitiation.SET_PARAMETER, (Boolean) value);
+                break;
+            default:
+                super.setByParameter(parameter, value);
+                break;
+        }
     }
 
-    public Integer getAngle() {
-        return angle;
+    public Integer getDimmingValue() {
+        return dimmingValue;
     }
 
-    public void setAngle(final DeviceParameterUpdatedInitiation initiation, final Integer newValue) {
-        final Integer oldValue = this.angle;
-        this.angle = newValue;
-        fireParameterChanged(DeviceParameter.ANGLE_DEGREE, initiation, oldValue, newValue);
+    public void setDimmingValue(final DeviceParameterUpdatedInitiation initiation, final Integer dimmingValue) {
+        final Integer old = this.dimmingValue;
+        this.dimmingValue = dimmingValue;
+        fireParameterChanged(DeviceParameter.POSITION_PERCENT, initiation, old, dimmingValue);
     }
 
-    public Integer getPosition() {
-        return position;
+    public Boolean getOn() {
+        return on;
     }
 
-    public void setPosition(final DeviceParameterUpdatedInitiation initiation, final Integer newValue) {
-        final Integer oldValue = this.position;
-        this.position = newValue;
-        fireParameterChanged(DeviceParameter.POSITION_PERCENT, initiation, oldValue, newValue);
+    public void setOn(final DeviceParameterUpdatedInitiation initiation, final Boolean on) {
+        final Boolean old = this.on;
+        this.on = on;
+        fireParameterChanged(DeviceParameter.SWITCH, initiation, old, on);
     }
 
 }

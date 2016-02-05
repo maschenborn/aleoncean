@@ -29,6 +29,7 @@ import eu.aleon.aleoncean.packet.EnOceanId;
 import eu.aleon.aleoncean.packet.radio.userdata.UserDataScaleValueException;
 import eu.aleon.aleoncean.packet.radio.userdata.eepa53808.DimmingRange;
 import eu.aleon.aleoncean.packet.radio.userdata.eepa53808.UserDataEEPA53808CMD02;
+import eu.aleon.aleoncean.packet.radio.userdata.teachin4bs.UserData4BSTeachInVariant1;
 import eu.aleon.aleoncean.rxtx.ESP3Connector;
 
 /**
@@ -38,21 +39,30 @@ public class LocalDeviceEEPA53808CMD02 extends StandardDevice implements RemoteD
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalDeviceEEPA53808CMD02.class);
 
+    private Boolean teachIn;
     private Integer dimmingValue;
     private Boolean on;
 
-    public LocalDeviceEEPA53808CMD02(final ESP3Connector conn,
-                                     final EnOceanId addressRemote,
-                                     final EnOceanId addressLocal) {
+    public LocalDeviceEEPA53808CMD02(final ESP3Connector conn, final EnOceanId addressRemote,
+            final EnOceanId addressLocal) {
         super(conn, addressRemote, addressLocal);
+    }
+
+    public Boolean getTeachIn() {
+        return teachIn;
+    }
+
+    public void setTeachIn(final DeviceParameterUpdatedInitiation initiation, final Boolean newValue) {
+        final Boolean oldValue = this.teachIn;
+        this.teachIn = newValue;
+        fireParameterChanged(DeviceParameter.TEACHIN, initiation, oldValue, newValue);
     }
 
     public Integer getDimmingValue() {
         return dimmingValue;
     }
 
-    public void setDimmingValue(final DeviceParameterUpdatedInitiation initiation,
-                                final Integer dimmingValue) {
+    public void setDimmingValue(final DeviceParameterUpdatedInitiation initiation, final Integer dimmingValue) {
         final Integer old = this.dimmingValue;
         this.dimmingValue = dimmingValue;
         fireParameterChanged(DeviceParameter.POSITION_PERCENT, initiation, old, dimmingValue);
@@ -62,19 +72,32 @@ public class LocalDeviceEEPA53808CMD02 extends StandardDevice implements RemoteD
         return on;
     }
 
-    public void setOn(final DeviceParameterUpdatedInitiation initiation,
-                      final Boolean on) {
+    public void setOn(final DeviceParameterUpdatedInitiation initiation, final Boolean on) {
         final Boolean old = this.on;
         this.on = on;
-        fireParameterChanged(DeviceParameter.SWITCH, initiation, old, dimmingValue);
+        fireParameterChanged(DeviceParameter.SWITCH, initiation, old, on);
     }
 
     private void sendPacket() {
+        if (teachIn == null || !teachIn) {
+            sendPacketData();
+        } else {
+            sendPacketTeachIn();
+        }
+    }
+
+    private void sendPacketTeachIn() {
+        final UserData4BSTeachInVariant1 userData = new UserData4BSTeachInVariant1();
+        send(userData);
+    }
+
+    private void sendPacketData() {
         try {
             final UserDataEEPA53808CMD02 userData = new UserDataEEPA53808CMD02();
             userData.setTeachIn(false);
 
-            userData.setDimmingValueRelative(getDimmingValue());
+            // userData.setDimmingValueRelative(getDimmingValue());
+            userData.setDimmingValueAbsolute(getDimmingValue());
 
             userData.setRampingTime(0);
             userData.setDimmingRange(DimmingRange.ABSOLUTE_VALUE);
@@ -94,6 +117,7 @@ public class LocalDeviceEEPA53808CMD02 extends StandardDevice implements RemoteD
     protected void fillParameters(final Set<DeviceParameter> params) {
         params.add(DeviceParameter.POSITION_PERCENT);
         params.add(DeviceParameter.SWITCH);
+        params.add(DeviceParameter.TEACHIN);
     }
 
     @Override
@@ -103,13 +127,16 @@ public class LocalDeviceEEPA53808CMD02 extends StandardDevice implements RemoteD
                 return getDimmingValue();
             case SWITCH:
                 return getOn();
+            case TEACHIN:
+                return getTeachIn();
             default:
                 return super.getByParameter(parameter);
         }
     }
 
     @Override
-    public void setByParameter(final DeviceParameter parameter, final Object value) throws IllegalDeviceParameterException {
+    public void setByParameter(final DeviceParameter parameter, final Object value)
+            throws IllegalDeviceParameterException {
         assert DeviceParameter.getSupportedClass(parameter).isAssignableFrom(value.getClass());
         switch (parameter) {
             case POSITION_PERCENT:
@@ -118,6 +145,10 @@ public class LocalDeviceEEPA53808CMD02 extends StandardDevice implements RemoteD
                 break;
             case SWITCH:
                 setOn(DeviceParameterUpdatedInitiation.SET_PARAMETER, (Boolean) value);
+                sendPacket();
+                break;
+            case TEACHIN:
+                setTeachIn(DeviceParameterUpdatedInitiation.SET_PARAMETER, (Boolean) value);
                 sendPacket();
                 break;
             default:

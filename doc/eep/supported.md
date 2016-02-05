@@ -23,6 +23,13 @@
 * MOTION (r)
 * OCCUPANCY_BUTTON (r)
 
+## A5-11-03
+
+### Parameter
+
+* ANGLE_DEGREE (r)
+* POSITION_PERCENT (r)
+
 ## A5-12-01
 
 ### Parameter
@@ -41,7 +48,7 @@
 * TEMPERATURE_CONTROL_ENABLE (rw): Flag if the set point is controlled by temperature (or position).
 * TEMPERATURE_CONTROL_CUR_TEMP (rw): The current temperature used for proportional–integral controller (used if TEMPERATURE_CONTROL_ENABLE is true).
 
-__Pre-requirement__: [teach-in](#remotedevicesenddata)
+__Pre-requirement__: [teach-in](#remote-device-send-data)
 
 ## A5-38-08 - CMD 0x02
 
@@ -60,7 +67,7 @@ __Pre-requirement__: [teach-in](#remotedevicesenddata)
 
 This was tested with ["Funktionsstecker FS1" of "Telefunken Smart Building"](http://www.telefunken-sb.de/produkte/aufputz/funktionsstecker.html).
 
-__Pre-requirement__: [teach-in](#remotedevicesenddata)
+__Pre-requirement__: [teach-in](#remote-device-send-data)
 
 ## D5-00-01
 
