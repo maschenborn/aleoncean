@@ -60,21 +60,25 @@ public class UserDataEEPA53808CMD02 extends UserDataEEPA53808 {
 
     public int getDimmingValueRelative() throws UserDataScaleValueException {
         final long raw = Bits.getBitsFromBytes(getUserData(), OFFSET_EDIM, LENGTH_EDIM);
-        return (int) getScaleValue(raw, MIN_RANGE_EDIM, MAX_RANGE_EDIM, MIN_SCALE_EDIM_RELATIVE, MAX_SCALE_EDIM_RELATIVE);
+        return (int) getScaleValue(raw, MIN_RANGE_EDIM, MAX_RANGE_EDIM, MIN_SCALE_EDIM_RELATIVE,
+                MAX_SCALE_EDIM_RELATIVE);
     }
 
     public void setDimmingValueRelative(final int value) throws UserDataScaleValueException {
-        final long range = getRangeValue(value, MIN_SCALE_EDIM_RELATIVE, MAX_SCALE_EDIM_RELATIVE, MIN_RANGE_EDIM, MAX_RANGE_EDIM);
+        final long range = getRangeValue(value, MIN_SCALE_EDIM_RELATIVE, MAX_SCALE_EDIM_RELATIVE, MIN_RANGE_EDIM,
+                MAX_RANGE_EDIM);
         Bits.setBitsOfBytes(range, getUserData(), OFFSET_EDIM, LENGTH_EDIM);
     }
 
     public int getDimmingValueAbsolute() throws UserDataScaleValueException {
         final long raw = Bits.getBitsFromBytes(getUserData(), OFFSET_EDIM, LENGTH_EDIM);
-        return (int) getScaleValue(raw, MIN_RANGE_EDIM, MAX_RANGE_EDIM, MIN_SCALE_EDIM_ABSOLUTE, MAX_SCALE_EDIM_ABSOLUTE);
+        return (int) getScaleValue(raw, MIN_RANGE_EDIM, MAX_RANGE_EDIM, MIN_SCALE_EDIM_ABSOLUTE,
+                MAX_SCALE_EDIM_ABSOLUTE);
     }
 
     public void setDimmingValueAbsolute(final int value) throws UserDataScaleValueException {
-        final long range = getRangeValue(value, MIN_SCALE_EDIM_ABSOLUTE, MAX_SCALE_EDIM_ABSOLUTE, MIN_RANGE_EDIM, MAX_RANGE_EDIM);
+        final long range = getRangeValue(value, MIN_SCALE_EDIM_ABSOLUTE, MAX_SCALE_EDIM_ABSOLUTE, MIN_RANGE_EDIM,
+                MAX_RANGE_EDIM);
         Bits.setBitsOfBytes(range, getUserData(), OFFSET_EDIM, LENGTH_EDIM);
     }
 

@@ -28,6 +28,7 @@ import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA50802;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA51103;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA51201;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA52001;
+import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA53808CMD02;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPD20108;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPD50001;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPF60201;
@@ -53,6 +54,7 @@ public enum SupportedDevice {
     RD_A51103("RD_A5-11-03", RemoteDeviceEEPA51103.class),
     RD_A51201("RD_A5-12-01", RemoteDeviceEEPA51201.class),
     RD_A52001("RD_A5-20-01", RemoteDeviceEEPA52001.class),
+    RD_A53808CMD2("RD_A5-38-08_CMD02", RemoteDeviceEEPA53808CMD02.class),
     RD_D20108("RD_D2-01-08", RemoteDeviceEEPD20108.class),
     RD_D50001("RD_D5-00-01", RemoteDeviceEEPD50001.class),
     RD_F60201("RD_F6-02-01", RemoteDeviceEEPF60201.class),

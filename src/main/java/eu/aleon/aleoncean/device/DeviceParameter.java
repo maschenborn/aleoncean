@@ -66,6 +66,7 @@ public enum DeviceParameter {
     SETPOINT_TEMPERATURE_CELSIUS(Double.class),
     SUPPLY_VOLTAGE_V("SUPPLY_VOLTAGE_V", Double.class),
     SWITCH("SWITCH", Boolean.class),
+    TEACHIN("TEACHIN", Boolean.class),
     TEMPERATURE_CELSIUS("TEMPERATURE_CELSIUS", Double.class),
     TEMPERATURE_CONTROL_ENABLE(Boolean.class),
     TEMPERATURE_CONTROL_CUR_TEMP(Double.class),
