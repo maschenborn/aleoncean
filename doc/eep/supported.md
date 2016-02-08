@@ -54,8 +54,8 @@ __Pre-requirement__: [teach-in](#remote-device-send-data)
 
 ### Parameter
 
-* POSITION_PERCENT (rw): The dimming value
-* SWITCH (rw): On / off
+* POSITION_PERCENT (r): The dimming value
+* SWITCH (r): On / off
 
 ## D2-01-08
 
@@ -100,6 +100,14 @@ __Pre-requirement__: [teach-in](#remote-device-send-data)
 * WINDOW_HANDLE_POSITION (r)
 
 # local device
+
+## A5-38-08 - CMD 0x02
+
+### Parameter
+
+* POSITION_PERCENT (w): The dimming value
+* SWITCH (w): On / off
+* TEACHIN (w): (temporary) send 4BS teach-in packet
 
 ## F6-02-01
 
