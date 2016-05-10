@@ -24,6 +24,9 @@ public class UserDataEEPA53808Factory {
         final UserDataEEPA53808 userData;
 
         switch (UserDataEEPA53808.getCommandId(raw)) {
+            case UserDataEEPA53808CMD01.CMD:
+                userData = new UserDataEEPA53808CMD01(raw);
+                break;
             case UserDataEEPA53808CMD02.CMD:
                 userData = new UserDataEEPA53808CMD02(raw);
                 break;

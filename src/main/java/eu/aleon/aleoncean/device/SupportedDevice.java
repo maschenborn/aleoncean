@@ -18,6 +18,7 @@ package eu.aleon.aleoncean.device;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import eu.aleon.aleoncean.device.local.LocalDeviceEEPA53808CMD01;
 import eu.aleon.aleoncean.device.local.LocalDeviceEEPA53808CMD02;
 import eu.aleon.aleoncean.device.local.LocalDeviceEEPF60201;
 import eu.aleon.aleoncean.device.local.LocalDeviceEEPF60202;
@@ -28,6 +29,7 @@ import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA50802;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA51103;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA51201;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA52001;
+import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA53808CMD01;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPA53808CMD02;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPD20108;
 import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPD50001;
@@ -44,6 +46,7 @@ import eu.aleon.aleoncean.device.remote.RemoteDeviceEEPF61001;
  * @author Markus Rathgeb {@literal <maggu2810@gmail.com>}
  */
 public enum SupportedDevice {
+    LD_A53808CMD1("LD_A5-38-08_CMD01", LocalDeviceEEPA53808CMD01.class),
     LD_A53808CMD2("LD_A5-38-08_CMD02", LocalDeviceEEPA53808CMD02.class),
     LD_F60201("LD_F6-02-01", LocalDeviceEEPF60201.class),
     LD_F60202("LD_F6-02-02", LocalDeviceEEPF60202.class),
@@ -54,6 +57,7 @@ public enum SupportedDevice {
     RD_A51103("RD_A5-11-03", RemoteDeviceEEPA51103.class),
     RD_A51201("RD_A5-12-01", RemoteDeviceEEPA51201.class),
     RD_A52001("RD_A5-20-01", RemoteDeviceEEPA52001.class),
+    RD_A53808CMD1("RD_A5-38-08_CMD01", RemoteDeviceEEPA53808CMD01.class),
     RD_A53808CMD2("RD_A5-38-08_CMD02", RemoteDeviceEEPA53808CMD02.class),
     RD_D20108("RD_D2-01-08", RemoteDeviceEEPD20108.class),
     RD_D50001("RD_D5-00-01", RemoteDeviceEEPD50001.class),
